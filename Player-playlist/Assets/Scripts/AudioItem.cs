@@ -14,6 +14,7 @@ public class AudioItem
 
     public AudioItem(AudioClip aClip)
     {
+        this.name = myClip.name;
         this.myClip = aClip;
     }
 	

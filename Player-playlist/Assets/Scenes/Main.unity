@@ -285,14 +285,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   myAudioSource: {fileID: 1402729885}
-  currentFadeType: 0
+  currentFadeType: 1
+  isLooping: 0
   audioPlaylist:
-  - name: Music Loop
-    myClip: {fileID: 8300000, guid: 616202a7511c24df396719e01299a2ee, type: 3}
   - name: 
-    myClip: {fileID: 0}
+    myClip: {fileID: 8300000, guid: dff69d57ccdea44a8afe419ca2fce8ff, type: 3}
   - name: 
-    myClip: {fileID: 0}
+    myClip: {fileID: 8300000, guid: 2e0a6a39182c743d9bff846fc22bdcec, type: 3}
+  - name: 
+    myClip: {fileID: 8300000, guid: 7ba5878b76e784fbdad3c0059196178b, type: 3}
 --- !u!4 &1402729884
 Transform:
   m_ObjectHideFlags: 0
