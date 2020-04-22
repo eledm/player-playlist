@@ -1,23 +1,49 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NoFadeClass : PlaylistManager
+
+public static class NoFadeClass
 {
-    public static NoFadeClass Instance;
+
+    /*//singleton structure
+    private static NoFadeClass _instance;
+    public static NoFadeClass Instance
+    {
+        get
+        {
+            if (_instance == null)
+                Debug.Log("NoFadeClass Instance is null");
+
+            return _instance;
+        }
+    }
 
     private void Awake()
     {
+        _instance = this;
+        
+    }*/
 
-        Instance = this;
-    }
+    //
 
-    public void NoFadePlay()
+    public static  List<AudioItem> audioPlaylist = PlaylistManager.Instance.audioPlaylist;
+    public static  AudioSource myAudioSource = PlaylistManager.Instance.myAudioSource;
+    public static bool isLooping = PlaylistManager.Instance.isLooping; 
+
+
+    public static void NoFadePlay()
     {
-        StartCoroutine(PlayNoFade());
+        //StartCoroutine(PlayNoFade());
     }
-    
-    private IEnumerator PlayNoFade()
+
+    /*private static void StartCoroutine(IEnumerator enumerator)
+    {
+        throw new NotImplementedException();
+    }*/
+
+    private static IEnumerator PlayNoFade()
     {
         
         while (isLooping == true)
