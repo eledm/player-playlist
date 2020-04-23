@@ -25,6 +25,8 @@ public class PlaylistManager : MonoBehaviour
     //____________________________________
     
     public AudioSource myAudioSource;
+    
+    
     //create an enum with different states: fade, no fade, continuous
     public enum FadeType
     {
@@ -40,16 +42,12 @@ public class PlaylistManager : MonoBehaviour
 
     //list of AudioItems
 	public List<AudioItem> audioPlaylist = new List<AudioItem>();
+    
 
 	// Use this for initialization
 	void Start ()
     {
-
-
-       
-
-        //myAudioSource.clip = audioPlaylist[0].myClip;
-        //myAudioSource.Play();
+        
         switch (currentFadeType)
 		{
             case FadeType.NoFade:
@@ -57,7 +55,6 @@ public class PlaylistManager : MonoBehaviour
                 break;
 
             case FadeType.Fade:
-                //StartCoroutine(FadeIn(0.01f));
                 StartCoroutine(PlayFade());
                 break;
 
@@ -83,6 +80,7 @@ public class PlaylistManager : MonoBehaviour
             for (int i = 0; i < audioPlaylist.Count; i++)
             {
                 myAudioSource.clip = audioPlaylist[i].myClip;
+                myAudioSource.volume = audioPlaylist[i].volumeSlider;
                 myAudioSource.Play();
                 yield return new WaitForSeconds(myAudioSource.clip.length);
                 Debug.Log(audioPlaylist.Count);
@@ -98,6 +96,7 @@ public class PlaylistManager : MonoBehaviour
         foreach (AudioItem audio in audioPlaylist)
         {
             myAudioSource.clip = audio.myClip;
+            myAudioSource.volume = audio.volumeSlider;
             myAudioSource.Play();
             yield return new WaitForSeconds(myAudioSource.clip.length);
 
@@ -107,11 +106,11 @@ public class PlaylistManager : MonoBehaviour
 
     private float _minVolume = 0f;
     private float _maxVolume = 1f;
+    //int i;
 
     IEnumerator FadeIn(float speed)
     {
 
-        myAudioSource.clip = audioPlaylist[0].myClip;
         myAudioSource.volume = _minVolume;
         float audioVolume = myAudioSource.volume;
         myAudioSource.Play();
@@ -127,10 +126,9 @@ public class PlaylistManager : MonoBehaviour
 
     IEnumerator FadeOut(float speed)
     {
-        myAudioSource.clip = audioPlaylist[0].myClip;
+        
         myAudioSource.volume = _maxVolume;
         float audioVolume = myAudioSource.volume;
-        myAudioSource.Play();
 
         while (myAudioSource.volume > _minVolume)
         {
@@ -148,13 +146,35 @@ public class PlaylistManager : MonoBehaviour
         //start fade out coroutine
         //start fade in second clip
 
-        foreach(var audioclip in audioPlaylist)
+        while (isLooping == true)
         {
-            StartCoroutine(FadeIn(0.01f));
-            yield return new WaitForSeconds(myAudioSource.clip.length - 3);
-            StartCoroutine(FadeOut(0.01f));
+            for (int i = 0; i < audioPlaylist.Count; i++)
+            {
+                myAudioSource.clip = audioPlaylist[i].myClip;
+                StartCoroutine(FadeIn(0.05f));
+                yield return new WaitForSeconds(myAudioSource.clip.length - 3);
+                StartCoroutine(FadeOut(0.05f));
+                yield return new WaitForSeconds(3f);
+
+
+                if (i == audioPlaylist.Count)
+                    i = 0;
+
+            }
 
         }
+
+        for (int i = 0; i < audioPlaylist.Count; i++)
+        {
+            myAudioSource.clip = audioPlaylist[i].myClip;
+            StartCoroutine(FadeIn(0.05f));
+            yield return new WaitForSeconds(myAudioSource.clip.length - 3);
+            StartCoroutine(FadeOut(0.05f));
+            yield return new WaitForSeconds(3f);
+        }
+        
+
+
     }
 
 }
