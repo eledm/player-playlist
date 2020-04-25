@@ -286,11 +286,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   myAudioSource: {fileID: 1402729885}
   currentFadeType: 1
-  isLooping: 0
+  loop: 0
+  shuffle: 0
   audioPlaylist:
   - name: 
     myClip: {fileID: 8300000, guid: b3a61031e54134e2aa108abda42cccb1, type: 3}
-    volumeSlider: 0.65
+    volumeSlider: 1
   - name: 
     myClip: {fileID: 8300000, guid: 21eb7289895264c58ab24f7deaaa2b6a, type: 3}
     volumeSlider: 1

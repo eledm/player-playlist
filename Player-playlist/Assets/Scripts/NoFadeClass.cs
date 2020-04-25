@@ -30,7 +30,7 @@ public static class NoFadeClass
 
     public static  List<AudioItem> audioPlaylist = PlaylistManager.Instance.audioPlaylist;
     public static  AudioSource myAudioSource = PlaylistManager.Instance.myAudioSource;
-    public static bool isLooping = PlaylistManager.Instance.isLooping; 
+    public static bool isLooping = PlaylistManager.Instance.loop; 
 
 
     public static void NoFadePlay()

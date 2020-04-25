@@ -14,7 +14,7 @@ public class PlaylistManager : MonoBehaviour
         get
         {
             if (_instance == null)
-                Debug.Log("Playlist Manager Instance is null.");
+                Debug.LogError("Playlist Manager Instance is null.");
             return _instance;
         }
     }
@@ -37,7 +37,9 @@ public class PlaylistManager : MonoBehaviour
 
     public FadeType currentFadeType;
 
-    public bool isLooping;
+    public bool loop;
+
+    public bool shuffle;
     
 
     //list of AudioItems
@@ -75,7 +77,7 @@ public class PlaylistManager : MonoBehaviour
     IEnumerator PlayNoFade()
     {
 
-        while (isLooping == true)
+        while (loop == true)
         {
             for (int i = 0; i < audioPlaylist.Count; i++)
             {
@@ -146,7 +148,7 @@ public class PlaylistManager : MonoBehaviour
         //start fade out coroutine
         //start fade in second clip
 
-        while (isLooping == true)
+        while (loop == true)
         {
             for (int i = 0; i < audioPlaylist.Count; i++)
             {
