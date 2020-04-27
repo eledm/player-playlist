@@ -28,7 +28,7 @@ public static class NoFadeClass
 
     //
 
-    public static  List<AudioItem> audioPlaylist = PlaylistManager.Instance.audioPlaylist;
+    /*public static  List<AudioItem> audioPlaylist = PlaylistManager.Instance.audioPlaylist;
     public static  AudioSource myAudioSource = PlaylistManager.Instance.myAudioSource;
     public static bool isLooping = PlaylistManager.Instance.loop; 
 
@@ -43,6 +43,8 @@ public static class NoFadeClass
         throw new NotImplementedException();
     }*/
 
+
+        /*
     private static IEnumerator PlayNoFade()
     {
         
@@ -71,5 +73,5 @@ public static class NoFadeClass
 
         }
 
-    }
+    }*/
 }

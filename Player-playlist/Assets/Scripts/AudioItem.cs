@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Security.Policy;
 using UnityEngine;
@@ -9,8 +10,8 @@ public class AudioItem
 {
     public string name;
     public AudioClip myClip;
-    [Range (0.0f,1.0f)]
-    public float volumeSlider;
+    //[Range (0.0f,1.0f)]
+    //public float volumeSlider;
 
 
     //public Volume vol;
@@ -24,7 +25,11 @@ public class AudioItem
         
          
     }
-	
+
+    public static explicit operator AudioItem(UnityEngine.Object v)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 /*public class Volume : AudioItem

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEditor;
 using UnityEditor.Audio;
 using UnityEngine;
@@ -43,11 +44,26 @@ public class PlaylistManager : MonoBehaviour
     
 
     //list of AudioItems
-	public List<AudioItem> audioPlaylist = new List<AudioItem>();
-    
+	public AudioClip[] audioPlaylist;
+    //public AudioItem[] audioPlaylist;
+    //public 
 
-	// Use this for initialization
-	void Start ()
+    void Start()
+    {
+
+        //AudioItem[] gos = (Resources.LoadAll("Ground", AudioItem));
+
+
+        //theAudio = Resources.LoadAll("Audio");
+
+        audioPlaylist = Resources.LoadAll("Audio") as AudioClip[];
+
+
+
+    }
+
+    // Use this for initialization
+    public void StartRoutines ()
     {
         
         switch (currentFadeType)
@@ -66,39 +82,84 @@ public class PlaylistManager : MonoBehaviour
         
     }
 
+    public void SetLoop()
+    {
+        if(loop == false)
+        {
+            loop = true;
+        }
+        else
+        {
+            loop = false;
+        }
+    }
+
+    public void SetShuffle()
+    {
+        if(shuffle == false)
+        {
+            shuffle = true;
+        }
+        else
+        {
+            shuffle = false;
+        }
+    }
+
     // Update is called once per frame
     void Update ()
 	{
-
+        
 	}
 
     //COROUTINES
 
+        
+
     IEnumerator PlayNoFade()
     {
+        
+
+        while (shuffle == true)
+        {
+
+            //int songNumber = Random.Range(0, audioPlaylist.Count);
+
+
+            for (int i = Random.Range(0, audioPlaylist.Length) ; i < audioPlaylist.Length; )
+            {
+                myAudioSource.clip = audioPlaylist[i];//.myClip;
+                //myAudioSource.volume = audioPlaylist[i].volumeSlider;
+                myAudioSource.Play();
+                yield return new WaitForSeconds(myAudioSource.clip.length);
+            }
+
+
+        }
+
 
         while (loop == true)
         {
-            for (int i = 0; i < audioPlaylist.Count; i++)
+            for (int i = 0; i < audioPlaylist.Length; i++)
             {
-                myAudioSource.clip = audioPlaylist[i].myClip;
-                myAudioSource.volume = audioPlaylist[i].volumeSlider;
+                myAudioSource.clip = audioPlaylist[i];//.myClip;
+                //myAudioSource.volume = audioPlaylist[i].volumeSlider;
                 myAudioSource.Play();
                 yield return new WaitForSeconds(myAudioSource.clip.length);
-                Debug.Log(audioPlaylist.Count);
+            
 
 
-                if (i == audioPlaylist.Count)
+                if (i == audioPlaylist.Length)
                     i = 0;
 
             }
         }
 
 
-        foreach (AudioItem audio in audioPlaylist)
+        foreach (AudioClip audio in audioPlaylist)
         {
-            myAudioSource.clip = audio.myClip;
-            myAudioSource.volume = audio.volumeSlider;
+            myAudioSource.clip = audio;//.myClip;
+            //myAudioSource.volume = audio.volumeSlider;
             myAudioSource.Play();
             yield return new WaitForSeconds(myAudioSource.clip.length);
 
@@ -142,33 +203,51 @@ public class PlaylistManager : MonoBehaviour
 
     IEnumerator PlayFade()
     {
+
+        while (shuffle == true)
+        {
+
+            int songNumber = Random.Range(0, audioPlaylist.Length);
+
+
+            myAudioSource.clip = audioPlaylist[songNumber];
+            StartCoroutine(FadeIn(0.05f));
+            yield return new WaitForSeconds(myAudioSource.clip.length - 3);
+            StartCoroutine(FadeOut(0.05f));
+            yield return new WaitForSeconds(3f);
+
+
+        }
+
         //loop
         //start fade in coroutine with the first clip
         //wait until the end of the clip
         //start fade out coroutine
         //start fade in second clip
 
+
+
         while (loop == true)
         {
-            for (int i = 0; i < audioPlaylist.Count; i++)
+            for (int i = 0; i < audioPlaylist.Length; i++)
             {
-                myAudioSource.clip = audioPlaylist[i].myClip;
+                myAudioSource.clip = audioPlaylist[i];//.myClip;
                 StartCoroutine(FadeIn(0.05f));
                 yield return new WaitForSeconds(myAudioSource.clip.length - 3);
                 StartCoroutine(FadeOut(0.05f));
                 yield return new WaitForSeconds(3f);
 
 
-                if (i == audioPlaylist.Count)
+                if (i == audioPlaylist.Length)
                     i = 0;
 
             }
 
         }
 
-        for (int i = 0; i < audioPlaylist.Count; i++)
+        for (int i = 0; i < audioPlaylist.Length; i++)
         {
-            myAudioSource.clip = audioPlaylist[i].myClip;
+            myAudioSource.clip = audioPlaylist[i];//.myClip;
             StartCoroutine(FadeIn(0.05f));
             yield return new WaitForSeconds(myAudioSource.clip.length - 3);
             StartCoroutine(FadeOut(0.05f));
