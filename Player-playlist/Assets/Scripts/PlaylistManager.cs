@@ -1,9 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Security.Policy;
 using JetBrains.Annotations;
 using UnityEditor;
 using UnityEditor.Audio;
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(AudioSource))]
 public class PlaylistManager : MonoBehaviour
@@ -56,7 +59,11 @@ public class PlaylistManager : MonoBehaviour
 
         //theAudio = Resources.LoadAll("Audio");
 
-        audioPlaylist = Resources.LoadAll("Audio") as AudioClip[];
+        audioPlaylist = Resources.LoadAll<AudioClip>("Audio"); //as AudioClip[];
+        foreach (AudioClip audio in audioPlaylist)
+        {
+            Debug.Log("AudioClip: " + audio.name);
+        }
 
 
 
@@ -82,15 +89,42 @@ public class PlaylistManager : MonoBehaviour
         
     }
 
+    public void Stop()
+    {
+        myAudioSource.Stop();
+        StopAllCoroutines();
+        if (GameObject.Find("Pause Button").GetComponentInChildren<Text>().text == "Resume")
+            GameObject.Find("Pause Button").GetComponentInChildren<Text>().text = "Pause";
+    }
+
+    public void Pause ()
+    {
+        if (myAudioSource.isPlaying)
+        {
+            myAudioSource.Pause();
+            GameObject.Find("Pause Button").GetComponentInChildren<Text>().text = "Resume";
+            Time.timeScale = 0;
+        }
+        else
+        {
+            Time.timeScale = 1.0f;
+            myAudioSource.Play();
+            GameObject.Find("Pause Button").GetComponentInChildren<Text>().text = "Pause";
+        }
+        
+    }
+
     public void SetLoop()
     {
         if(loop == false)
         {
             loop = true;
+            GameObject.Find("Loop Button").GetComponentInChildren<Image>().color = Color.green;
         }
         else
         {
             loop = false;
+            GameObject.Find("Loop Button").GetComponentInChildren<Image>().color = Color.white;
         }
     }
 
@@ -99,10 +133,12 @@ public class PlaylistManager : MonoBehaviour
         if(shuffle == false)
         {
             shuffle = true;
+            GameObject.Find("Shuffle Button").GetComponentInChildren<Image>().color = Color.green;
         }
         else
         {
             shuffle = false;
+            GameObject.Find("Shuffle Button").GetComponentInChildren<Image>().color = Color.white;
         }
     }
 
@@ -123,16 +159,22 @@ public class PlaylistManager : MonoBehaviour
         while (shuffle == true)
         {
 
-            //int songNumber = Random.Range(0, audioPlaylist.Count);
+            int _lastClip = -1;
 
+            
+            int _currentClip = UnityEngine.Random.Range(0, audioPlaylist.Length);
 
-            for (int i = Random.Range(0, audioPlaylist.Length) ; i < audioPlaylist.Length; )
+            while (_lastClip == _currentClip)
             {
-                myAudioSource.clip = audioPlaylist[i];//.myClip;
-                //myAudioSource.volume = audioPlaylist[i].volumeSlider;
-                myAudioSource.Play();
-                yield return new WaitForSeconds(myAudioSource.clip.length);
+                _currentClip = UnityEngine.Random.Range(0, audioPlaylist.Length);
             }
+            myAudioSource.clip = audioPlaylist[_currentClip];//.myClip;
+            //myAudioSource.volume = audioPlaylist[i].volumeSlider;
+            myAudioSource.Play();
+            yield return new WaitForSeconds(myAudioSource.clip.length);
+            _lastClip =  _currentClip;
+            
+
 
 
         }
@@ -203,20 +245,24 @@ public class PlaylistManager : MonoBehaviour
 
     IEnumerator PlayFade()
     {
-
+        
         while (shuffle == true)
         {
+            int _lastClip = -1;
 
-            int songNumber = Random.Range(0, audioPlaylist.Length);
+            int _currentClip = UnityEngine.Random.Range(0, audioPlaylist.Length);
 
-
-            myAudioSource.clip = audioPlaylist[songNumber];
+            while (_lastClip == _currentClip)
+            {
+                _currentClip = UnityEngine.Random.Range(0, audioPlaylist.Length);
+            }
+            myAudioSource.clip = audioPlaylist[_currentClip];
             StartCoroutine(FadeIn(0.05f));
             yield return new WaitForSeconds(myAudioSource.clip.length - 3);
             StartCoroutine(FadeOut(0.05f));
             yield return new WaitForSeconds(3f);
 
-
+            _lastClip = _currentClip;
         }
 
         //loop
