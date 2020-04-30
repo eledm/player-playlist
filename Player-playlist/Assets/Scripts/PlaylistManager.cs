@@ -2,10 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Policy;
+using Boo.Lang.Environments;
 using JetBrains.Annotations;
 using UnityEditor;
 using UnityEditor.Audio;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(AudioSource))]
@@ -27,10 +29,7 @@ public class PlaylistManager : MonoBehaviour
         _instance = this;
     }
     //____________________________________
-    
-    public AudioSource myAudioSource;
-    
-    
+   
     //create an enum with different states: fade, no fade, continuous
     public enum FadeType
     {
@@ -39,37 +38,29 @@ public class PlaylistManager : MonoBehaviour
         Continuous
     }
 
+    public AudioSource myAudioSource;
+
     public FadeType currentFadeType;
 
     public bool loop;
 
     public bool shuffle;
-    
 
-    //list of AudioItems
+    public AudioMixer myAM;
+    
 	public AudioClip[] audioPlaylist;
-    //public AudioItem[] audioPlaylist;
-    //public 
+    
 
     void Start()
     {
-
-        //AudioItem[] gos = (Resources.LoadAll("Ground", AudioItem));
-
-
-        //theAudio = Resources.LoadAll("Audio");
-
-        audioPlaylist = Resources.LoadAll<AudioClip>("Audio"); //as AudioClip[];
+        audioPlaylist = Resources.LoadAll<AudioClip>("Audio"); 
         foreach (AudioClip audio in audioPlaylist)
         {
             Debug.Log("AudioClip: " + audio.name);
         }
-
-
-
     }
 
-    // Use this for initialization
+   
     public void StartRoutines ()
     {
         
@@ -142,10 +133,51 @@ public class PlaylistManager : MonoBehaviour
         }
     }
 
+    public void MasterVolume(float masterLvl)
+    {
+        myAM.SetFloat("masterVol", masterLvl);
+    }
+
+    
+
+    public void PlayNext()
+    {
+        var indexOfSong = Array.IndexOf(audioPlaylist, myAudioSource.clip);
+        Debug.Log(indexOfSong);
+        indexOfSong++;
+        if (indexOfSong >= audioPlaylist.Length)
+            indexOfSong = 0;
+ 
+        myAudioSource.clip = audioPlaylist[indexOfSong];
+       
+        myAudioSource.Play();
+    }
+
+    public void PlayPrevious()
+    {
+        var indexOfSong = Array.IndexOf(audioPlaylist, myAudioSource.clip);
+        indexOfSong--;
+        Debug.Log(indexOfSong);
+        if (indexOfSong < 0)
+            indexOfSong = audioPlaylist.Length;
+        
+
+        myAudioSource.clip = audioPlaylist[indexOfSong];
+        myAudioSource.Play();
+    }
+
     // Update is called once per frame
     void Update ()
 	{
-        
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            PlayNext();
+        }
+
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            PlayPrevious();
+        }
 	}
 
     //COROUTINES
