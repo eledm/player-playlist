@@ -1,11 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Security.Policy;
-using Boo.Lang.Environments;
-using JetBrains.Annotations;
-using UnityEditor;
-using UnityEditor.Audio;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
@@ -58,7 +52,8 @@ public class PlaylistManager : MonoBehaviour
         {
             Debug.Log("AudioClip: " + audio.name);
         }
-    }
+
+}
 
    
     public void StartRoutines ()
@@ -155,29 +150,24 @@ public class PlaylistManager : MonoBehaviour
 
     public void PlayPrevious()
     {
-        var indexOfSong = Array.IndexOf(audioPlaylist, myAudioSource.clip);
+        int indexOfSong = Array.IndexOf(audioPlaylist, myAudioSource.clip);
         indexOfSong--;
-        Debug.Log(indexOfSong);
-        if (indexOfSong < 0)
-            indexOfSong = audioPlaylist.Length;
         
+        if (indexOfSong < 0)
+            indexOfSong = 0;
+
+        Debug.Log(indexOfSong);
 
         myAudioSource.clip = audioPlaylist[indexOfSong];
         myAudioSource.Play();
     }
 
+    
+    
     // Update is called once per frame
     void Update ()
 	{
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            PlayNext();
-        }
 
-        if (Input.GetKeyDown(KeyCode.B))
-        {
-            PlayPrevious();
-        }
 	}
 
     //COROUTINES
@@ -200,8 +190,7 @@ public class PlaylistManager : MonoBehaviour
             {
                 _currentClip = UnityEngine.Random.Range(0, audioPlaylist.Length);
             }
-            myAudioSource.clip = audioPlaylist[_currentClip];//.myClip;
-            //myAudioSource.volume = audioPlaylist[i].volumeSlider;
+            myAudioSource.clip = audioPlaylist[_currentClip];//.myClip;           
             myAudioSource.Play();
             yield return new WaitForSeconds(myAudioSource.clip.length);
             _lastClip =  _currentClip;
@@ -216,8 +205,7 @@ public class PlaylistManager : MonoBehaviour
         {
             for (int i = 0; i < audioPlaylist.Length; i++)
             {
-                myAudioSource.clip = audioPlaylist[i];//.myClip;
-                //myAudioSource.volume = audioPlaylist[i].volumeSlider;
+                myAudioSource.clip = audioPlaylist[i];//.myClip;                
                 myAudioSource.Play();
                 yield return new WaitForSeconds(myAudioSource.clip.length);
             
@@ -233,7 +221,6 @@ public class PlaylistManager : MonoBehaviour
         foreach (AudioClip audio in audioPlaylist)
         {
             myAudioSource.clip = audio;//.myClip;
-            //myAudioSource.volume = audio.volumeSlider;
             myAudioSource.Play();
             yield return new WaitForSeconds(myAudioSource.clip.length);
 
