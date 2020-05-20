@@ -21,26 +21,25 @@ public class PlaylistManager : MonoBehaviour
     private void Awake()
     {
         _instance = this;
+
+        _dropdown = FindObjectOfType<Dropdown>();
     }
+
+
     //____________________________________
    
-    //create an enum with different states: fade, no fade, continuous
-    public enum FadeType
-    {
-        Fade,
-        NoFade,
-        Continuous
-    }
+
 
     public AudioSource myAudioSource;
 
-    public FadeType currentFadeType;
-
-    public bool loop;
-
-    public bool shuffle;
+    Dropdown _dropdown;
 
     public AudioMixer myAM;
+
+
+    bool _loop;
+
+    bool _shuffle;
     
 	public AudioClip[] audioPlaylist;
     
@@ -55,32 +54,35 @@ public class PlaylistManager : MonoBehaviour
 
 }
 
-   
+    
+
     public void StartRoutines ()
     {
-        
-        switch (currentFadeType)
-		{
-            case FadeType.NoFade:
-                StartCoroutine(PlayNoFade());
-                break;
 
-            case FadeType.Fade:
-                StartCoroutine(PlayFade());
-                break;
-
-            case FadeType.Continuous:
-                break;
+        if(_dropdown.value == 0)
+        {
+            StartCoroutine(PlayNoFade());
         }
-        
+        else
+        if( _dropdown.value == 1)
+        {
+            StartCoroutine(PlayFade());
+        }
+
     }
 
+   
     public void Stop()
     {
         myAudioSource.Stop();
         StopAllCoroutines();
         if (GameObject.Find("Pause Button").GetComponentInChildren<Text>().text == "Resume")
+        {
             GameObject.Find("Pause Button").GetComponentInChildren<Text>().text = "Pause";
+            GameObject.Find("SongName").GetComponentInChildren<Text>().text = "Now playing: " ;
+        }
+            
+
     }
 
     public void Pause ()
@@ -102,35 +104,35 @@ public class PlaylistManager : MonoBehaviour
 
     public void SetLoop()
     {
-        if(loop == false)
+        if(_loop == false)
         {
-            loop = true;
+            _loop = true;
             GameObject.Find("Loop Button").GetComponentInChildren<Image>().color = Color.green;
         }
         else
         {
-            loop = false;
+            _loop = false;
             GameObject.Find("Loop Button").GetComponentInChildren<Image>().color = Color.white;
         }
     }
 
     public void SetShuffle()
     {
-        if(shuffle == false)
+        if(_shuffle == false)
         {
-            shuffle = true;
+            _shuffle = true;
             GameObject.Find("Shuffle Button").GetComponentInChildren<Image>().color = Color.green;
         }
         else
         {
-            shuffle = false;
+            _shuffle = false;
             GameObject.Find("Shuffle Button").GetComponentInChildren<Image>().color = Color.white;
         }
     }
 
     public void MasterVolume(float masterLvl)
     {
-        myAM.SetFloat("masterVol", masterLvl);
+        myAM.SetFloat("masterVol", Mathf.Log10(masterLvl) * 20);
     }
 
     
@@ -146,6 +148,7 @@ public class PlaylistManager : MonoBehaviour
         myAudioSource.clip = audioPlaylist[indexOfSong];
        
         myAudioSource.Play();
+        GameObject.Find("SongName").GetComponentInChildren<Text>().text = "Now playing: " + myAudioSource.clip.name;
     }
 
     public void PlayPrevious()
@@ -160,6 +163,7 @@ public class PlaylistManager : MonoBehaviour
 
         myAudioSource.clip = audioPlaylist[indexOfSong];
         myAudioSource.Play();
+        GameObject.Find("SongName").GetComponentInChildren<Text>().text = "Now playing: " + myAudioSource.clip.name;
     }
 
     
@@ -167,7 +171,7 @@ public class PlaylistManager : MonoBehaviour
     // Update is called once per frame
     void Update ()
 	{
-
+        
 	}
 
     //COROUTINES
@@ -176,37 +180,40 @@ public class PlaylistManager : MonoBehaviour
 
     IEnumerator PlayNoFade()
     {
-        
+        int _lastClip = -1;
 
-        while (shuffle == true)
+
+        while (_shuffle == true)
         {
 
-            int _lastClip = -1;
-
             
+
+
             int _currentClip = UnityEngine.Random.Range(0, audioPlaylist.Length);
 
             while (_lastClip == _currentClip)
             {
                 _currentClip = UnityEngine.Random.Range(0, audioPlaylist.Length);
             }
+            Debug.Log(_currentClip);
             myAudioSource.clip = audioPlaylist[_currentClip];//.myClip;           
             myAudioSource.Play();
+            GameObject.Find("SongName").GetComponentInChildren<Text>().text = "Now playing: " + myAudioSource.clip.name;
             yield return new WaitForSeconds(myAudioSource.clip.length);
-            _lastClip =  _currentClip;
-            
-
-
+            _lastClip = _currentClip;
+            Debug.Log(_lastClip);
 
         }
 
 
-        while (loop == true)
+
+        while (_loop == true)
         {
             for (int i = 0; i < audioPlaylist.Length; i++)
             {
                 myAudioSource.clip = audioPlaylist[i];//.myClip;                
                 myAudioSource.Play();
+                GameObject.Find("SongName").GetComponentInChildren<Text>().text = "Now playing: " + myAudioSource.clip.name;
                 yield return new WaitForSeconds(myAudioSource.clip.length);
             
 
@@ -217,16 +224,20 @@ public class PlaylistManager : MonoBehaviour
             }
         }
 
-
         foreach (AudioClip audio in audioPlaylist)
         {
             myAudioSource.clip = audio;//.myClip;
             myAudioSource.Play();
+            GameObject.Find("SongName").GetComponentInChildren<Text>().text = "Now playing: " + myAudioSource.clip.name;
             yield return new WaitForSeconds(myAudioSource.clip.length);
 
         }
 
+
+
     }
+
+   
 
     private float _minVolume = 0f;
     private float _maxVolume = 1f;
@@ -234,6 +245,7 @@ public class PlaylistManager : MonoBehaviour
 
     IEnumerator FadeIn(float speed)
     {
+
 
         myAudioSource.volume = _minVolume;
         float audioVolume = myAudioSource.volume;
@@ -264,10 +276,11 @@ public class PlaylistManager : MonoBehaviour
 
     IEnumerator PlayFade()
     {
-        
-        while (shuffle == true)
+        int _lastClip = -1;
+
+        while (_shuffle == true)
         {
-            int _lastClip = -1;
+            
 
             int _currentClip = UnityEngine.Random.Range(0, audioPlaylist.Length);
 
@@ -275,13 +288,16 @@ public class PlaylistManager : MonoBehaviour
             {
                 _currentClip = UnityEngine.Random.Range(0, audioPlaylist.Length);
             }
+            Debug.Log(_currentClip);
             myAudioSource.clip = audioPlaylist[_currentClip];
             StartCoroutine(FadeIn(0.05f));
+            GameObject.Find("SongName").GetComponentInChildren<Text>().text = "Now playing: " + myAudioSource.clip.name;
             yield return new WaitForSeconds(myAudioSource.clip.length - 3);
             StartCoroutine(FadeOut(0.05f));
             yield return new WaitForSeconds(3f);
 
             _lastClip = _currentClip;
+            Debug.Log(_lastClip);
         }
 
         //loop
@@ -292,12 +308,13 @@ public class PlaylistManager : MonoBehaviour
 
 
 
-        while (loop == true)
+        while (_loop == true)
         {
             for (int i = 0; i < audioPlaylist.Length; i++)
             {
                 myAudioSource.clip = audioPlaylist[i];//.myClip;
                 StartCoroutine(FadeIn(0.05f));
+                GameObject.Find("SongName").GetComponentInChildren<Text>().text = "Now playing: " + myAudioSource.clip.name;
                 yield return new WaitForSeconds(myAudioSource.clip.length - 3);
                 StartCoroutine(FadeOut(0.05f));
                 yield return new WaitForSeconds(3f);
@@ -314,6 +331,7 @@ public class PlaylistManager : MonoBehaviour
         {
             myAudioSource.clip = audioPlaylist[i];//.myClip;
             StartCoroutine(FadeIn(0.05f));
+            GameObject.Find("SongName").GetComponentInChildren<Text>().text = "Now playing: " + myAudioSource.clip.name;
             yield return new WaitForSeconds(myAudioSource.clip.length - 3);
             StartCoroutine(FadeOut(0.05f));
             yield return new WaitForSeconds(3f);
