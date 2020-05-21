@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Security.Policy;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
@@ -23,6 +24,8 @@ public class PlaylistManager : MonoBehaviour
         _instance = this;
 
         _dropdown = FindObjectOfType<Dropdown>();
+
+        playButton = GameObject.Find("Play Button");
     }
 
 
@@ -34,8 +37,13 @@ public class PlaylistManager : MonoBehaviour
 
     Dropdown _dropdown;
 
+    GameObject playButton;
+
     public AudioMixer myAM;
 
+    public Sprite pauseSprite;
+
+    public Sprite playSprite;
 
     bool _loop;
 
@@ -52,23 +60,52 @@ public class PlaylistManager : MonoBehaviour
             Debug.Log("AudioClip: " + audio.name);
         }
 
-}
+    }
 
     
 
     public void StartRoutines ()
     {
-
-        if(_dropdown.value == 0)
+        if (myAudioSource.isPlaying)
         {
-            StartCoroutine(PlayNoFade());
+            myAudioSource.Pause();
+            Time.timeScale = 0;
+            playButton.GetComponent<Image>().sprite = playSprite;
         }
         else
-        if( _dropdown.value == 1)
+        if (myAudioSource.isPlaying == false)
         {
-            StartCoroutine(PlayFade());
-        }
 
+            playButton.GetComponent<Image>().sprite = pauseSprite;
+
+            if (_pfRunning == true)
+            {
+                Time.timeScale = 1.0f;
+                myAudioSource.UnPause();
+
+            }
+            else
+            if (_pfRunning == true)
+            {
+                Time.timeScale = 1.0f;
+                myAudioSource.UnPause();
+
+            }
+            else
+            if (_dropdown.value == 0)
+            {
+
+                StartCoroutine(PlayNoFade());
+
+            }
+            else
+            if (_dropdown.value == 1)
+            {
+                StartCoroutine(PlayFade());
+              
+            }
+
+        }
     }
 
    
@@ -76,31 +113,12 @@ public class PlaylistManager : MonoBehaviour
     {
         myAudioSource.Stop();
         StopAllCoroutines();
-        if (GameObject.Find("Pause Button").GetComponentInChildren<Text>().text == "Resume")
-        {
-            GameObject.Find("Pause Button").GetComponentInChildren<Text>().text = "Pause";
-            GameObject.Find("SongName").GetComponentInChildren<Text>().text = "Now playing: " ;
-        }
-            
+        _pfRunning = false;
+        _pnfRunning = false;      
 
     }
 
-    public void Pause ()
-    {
-        if (myAudioSource.isPlaying)
-        {
-            myAudioSource.Pause();
-            GameObject.Find("Pause Button").GetComponentInChildren<Text>().text = "Resume";
-            Time.timeScale = 0;
-        }
-        else
-        {
-            Time.timeScale = 1.0f;
-            myAudioSource.Play();
-            GameObject.Find("Pause Button").GetComponentInChildren<Text>().text = "Pause";
-        }
-        
-    }
+
 
     public void SetLoop()
     {
@@ -176,10 +194,12 @@ public class PlaylistManager : MonoBehaviour
 
     //COROUTINES
 
-        
+    private bool _pnfRunning; 
 
     IEnumerator PlayNoFade()
     {
+        _pnfRunning = true;
+        Debug.Log("PNF Running");
         int _lastClip = -1;
 
 
@@ -274,8 +294,11 @@ public class PlaylistManager : MonoBehaviour
         }
     }
 
+    private bool _pfRunning;
     IEnumerator PlayFade()
     {
+        _pfRunning = true;
+        Debug.Log("PF running");
         int _lastClip = -1;
 
         while (_shuffle == true)
