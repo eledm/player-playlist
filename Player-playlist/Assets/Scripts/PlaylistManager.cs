@@ -45,6 +45,14 @@ public class PlaylistManager : MonoBehaviour
 
     public Sprite playSprite;
 
+    public Sprite shuffleOnSprite;
+
+    public Sprite shuffleOffSprite;
+
+    public Sprite loopOnSprite;
+
+    public Sprite loopOffSprite;
+
     bool _loop;
 
     bool _shuffle;
@@ -114,7 +122,10 @@ public class PlaylistManager : MonoBehaviour
         myAudioSource.Stop();
         StopAllCoroutines();
         _pfRunning = false;
-        _pnfRunning = false;      
+        _pnfRunning = false;
+        playButton.GetComponent<Image>().sprite = playSprite;
+        GameObject.Find("SongName").GetComponent<Text>().text = "Now playing: ";
+         
 
     }
 
@@ -125,12 +136,12 @@ public class PlaylistManager : MonoBehaviour
         if(_loop == false)
         {
             _loop = true;
-            GameObject.Find("Loop Button").GetComponentInChildren<Image>().color = Color.green;
+            GameObject.Find("Loop Button").GetComponentInChildren<Image>().sprite = loopOnSprite;
         }
         else
         {
             _loop = false;
-            GameObject.Find("Loop Button").GetComponentInChildren<Image>().color = Color.white;
+            GameObject.Find("Loop Button").GetComponentInChildren<Image>().sprite = loopOffSprite;
         }
     }
 
@@ -139,12 +150,12 @@ public class PlaylistManager : MonoBehaviour
         if(_shuffle == false)
         {
             _shuffle = true;
-            GameObject.Find("Shuffle Button").GetComponentInChildren<Image>().color = Color.green;
+            GameObject.Find("Shuffle Button").GetComponentInChildren<Image>().sprite = shuffleOffSprite;
         }
         else
         {
             _shuffle = false;
-            GameObject.Find("Shuffle Button").GetComponentInChildren<Image>().color = Color.white;
+            GameObject.Find("Shuffle Button").GetComponentInChildren<Image>().sprite = shuffleOnSprite ;
         }
     }
 
@@ -206,9 +217,6 @@ public class PlaylistManager : MonoBehaviour
         while (_shuffle == true)
         {
 
-            
-
-
             int _currentClip = UnityEngine.Random.Range(0, audioPlaylist.Length);
 
             while (_lastClip == _currentClip)
@@ -218,7 +226,7 @@ public class PlaylistManager : MonoBehaviour
             Debug.Log(_currentClip);
             myAudioSource.clip = audioPlaylist[_currentClip];//.myClip;           
             myAudioSource.Play();
-            GameObject.Find("SongName").GetComponentInChildren<Text>().text = "Now playing: " + myAudioSource.clip.name;
+            GameObject.Find("SongName").GetComponent<Text>().text = "Now playing: " + myAudioSource.clip.name;
             yield return new WaitForSeconds(myAudioSource.clip.length);
             _lastClip = _currentClip;
             Debug.Log(_lastClip);
