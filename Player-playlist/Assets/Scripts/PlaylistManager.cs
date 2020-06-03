@@ -214,46 +214,44 @@ public class PlaylistManager : MonoBehaviour
         int _lastClip = -1;
 
 
-        while (_shuffle == true)
-        {
-
-            int _currentClip = UnityEngine.Random.Range(0, audioPlaylist.Length);
-
-            while (_lastClip == _currentClip)
-            {
-                _currentClip = UnityEngine.Random.Range(0, audioPlaylist.Length);
-            }
-            Debug.Log(_currentClip);
-            myAudioSource.clip = audioPlaylist[_currentClip];//.myClip;           
-            myAudioSource.Play();
-            GameObject.Find("SongName").GetComponent<Text>().text = "Now playing: " + myAudioSource.clip.name;
-            yield return new WaitForSeconds(myAudioSource.clip.length);
-            _lastClip = _currentClip;
-            Debug.Log(_lastClip);
-
-        }
-
-
-
-        while (_loop == true)
-        {
-            for (int i = 0; i < audioPlaylist.Length; i++)
-            {
-                myAudioSource.clip = audioPlaylist[i];//.myClip;                
-                myAudioSource.Play();
-                GameObject.Find("SongName").GetComponentInChildren<Text>().text = "Now playing: " + myAudioSource.clip.name;
-                yield return new WaitForSeconds(myAudioSource.clip.length);
-            
-
-
-                if (i == audioPlaylist.Length)
-                    i = 0;
-
-            }
-        }
-
         foreach (AudioClip audio in audioPlaylist)
         {
+            while (_shuffle == true)
+            {
+
+                int _currentClip = UnityEngine.Random.Range(0, audioPlaylist.Length);
+
+                while (_lastClip == _currentClip)
+                {
+                    _currentClip = UnityEngine.Random.Range(0, audioPlaylist.Length);
+                }
+                Debug.Log(_currentClip);
+                myAudioSource.clip = audioPlaylist[_currentClip];//.myClip;
+                myAudioSource.Play();
+                GameObject.Find("SongName").GetComponent<Text>().text = "Now playing: " + myAudioSource.clip.name;
+                yield return new WaitForSeconds(myAudioSource.clip.length);
+                _lastClip = _currentClip;
+                Debug.Log(_lastClip);
+
+            }
+
+            while (_loop == true)
+            {
+                
+               
+                    myAudioSource.clip = audioPlaylist[i];//.myClip;                
+                    myAudioSource.Play();
+                    GameObject.Find("SongName").GetComponentInChildren<Text>().text = "Now playing: " + myAudioSource.clip.name;
+                    yield return new WaitForSeconds(myAudioSource.clip.length);
+
+
+
+                    if (i == audioPlaylist.Length)
+                        i = 0;
+
+                
+            }
+
             myAudioSource.clip = audio;//.myClip;
             myAudioSource.Play();
             GameObject.Find("SongName").GetComponentInChildren<Text>().text = "Now playing: " + myAudioSource.clip.name;
@@ -309,63 +307,60 @@ public class PlaylistManager : MonoBehaviour
         Debug.Log("PF running");
         int _lastClip = -1;
 
-        while (_shuffle == true)
+       
+
+        for (int i = 0; i < audioPlaylist.Length; i++)
         {
-            
 
-            int _currentClip = UnityEngine.Random.Range(0, audioPlaylist.Length);
-
-            while (_lastClip == _currentClip)
+            while (_shuffle == true)
             {
-                _currentClip = UnityEngine.Random.Range(0, audioPlaylist.Length);
-            }
-            Debug.Log(_currentClip);
-            myAudioSource.clip = audioPlaylist[_currentClip];
-            StartCoroutine(FadeIn(0.05f));
-            GameObject.Find("SongName").GetComponentInChildren<Text>().text = "Now playing: " + myAudioSource.clip.name;
-            yield return new WaitForSeconds(myAudioSource.clip.length - 3);
-            StartCoroutine(FadeOut(0.05f));
-            yield return new WaitForSeconds(3f);
-
-            _lastClip = _currentClip;
-            Debug.Log(_lastClip);
-        }
-
-        //loop
-        //start fade in coroutine with the first clip
-        //wait until the end of the clip
-        //start fade out coroutine
-        //start fade in second clip
 
 
+                int _currentClip = UnityEngine.Random.Range(0, audioPlaylist.Length);
 
-        while (_loop == true)
-        {
-            for (int i = 0; i < audioPlaylist.Length; i++)
-            {
-                myAudioSource.clip = audioPlaylist[i];//.myClip;
+                while (_lastClip == _currentClip)
+                {
+                    _currentClip = UnityEngine.Random.Range(0, audioPlaylist.Length);
+                }
+                Debug.Log(_currentClip);
+                myAudioSource.clip = audioPlaylist[_currentClip];
                 StartCoroutine(FadeIn(0.05f));
                 GameObject.Find("SongName").GetComponentInChildren<Text>().text = "Now playing: " + myAudioSource.clip.name;
                 yield return new WaitForSeconds(myAudioSource.clip.length - 3);
                 StartCoroutine(FadeOut(0.05f));
                 yield return new WaitForSeconds(3f);
 
+                _lastClip = _currentClip;
+                Debug.Log(_lastClip);
+            }
 
-                if (i == audioPlaylist.Length)
-                    i = 0;
+            while (_loop == true)
+            {
+
+                    myAudioSource.clip = audioPlaylist[i];
+                    StartCoroutine(FadeIn(0.05f));
+                    GameObject.Find("SongName").GetComponentInChildren<Text>().text = "Now playing: " + myAudioSource.clip.name;
+                    yield return new WaitForSeconds(myAudioSource.clip.length - 3);
+                    StartCoroutine(FadeOut(0.05f));
+                    yield return new WaitForSeconds(3f);
+
+
+                    if (i == audioPlaylist.Length)
+                        i = 0;
+
+                
 
             }
 
-        }
 
-        for (int i = 0; i < audioPlaylist.Length; i++)
-        {
-            myAudioSource.clip = audioPlaylist[i];//.myClip;
+            myAudioSource.clip = audioPlaylist[i];
             StartCoroutine(FadeIn(0.05f));
             GameObject.Find("SongName").GetComponentInChildren<Text>().text = "Now playing: " + myAudioSource.clip.name;
             yield return new WaitForSeconds(myAudioSource.clip.length - 3);
             StartCoroutine(FadeOut(0.05f));
             yield return new WaitForSeconds(3f);
+
+
         }
         
 
