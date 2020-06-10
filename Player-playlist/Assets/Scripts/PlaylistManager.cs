@@ -93,7 +93,7 @@ public class PlaylistManager : MonoBehaviour
 
             }
             else
-            if (_pfRunning == true)
+            if (_pnfRunning == true)
             {
                 Time.timeScale = 1.0f;
                 myAudioSource.UnPause();
@@ -214,7 +214,7 @@ public class PlaylistManager : MonoBehaviour
         int _lastClip = -1;
 
 
-        foreach (AudioClip audio in audioPlaylist)
+        for (int i = 0; i < audioPlaylist.Length; i++)
         {
             while (_shuffle == true)
             {
@@ -252,7 +252,7 @@ public class PlaylistManager : MonoBehaviour
                 
             }
 
-            myAudioSource.clip = audio;//.myClip;
+            myAudioSource.clip = audioPlaylist[i];
             myAudioSource.Play();
             GameObject.Find("SongName").GetComponentInChildren<Text>().text = "Now playing: " + myAudioSource.clip.name;
             yield return new WaitForSeconds(myAudioSource.clip.length);
